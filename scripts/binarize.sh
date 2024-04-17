@@ -7,13 +7,13 @@ if [ "$#" -gt 1 ]; then
 fi
 
 fairseq-preprocess \
-    --source-lang $l1 --target-lang $l2 \
-    --srcdict ./Data/it-mono/dict.$l1.txt \
-    --tgtdict ./Data/it-mono/dict.$l2.txt \
+    --source-lang $SRC --target-lang $TGT \
+    --srcdict ./Data/it-mono/dict.$SRC.txt \
+    --tgtdict ./Data/it-mono/dict.$TGT.txt \
     --trainpref $train_file.tok.spm \
         --validpref $dev_file.tok.spm \
         --testpref $test_file.tok.spm \
-    --destdir $databin \
+    --destdir "$(dirname $train_file)/bin" \
         --thresholdtgt 0 --thresholdsrc 0 --workers 20 $only_source
 
 # NOTE: if monolingual, --only-source

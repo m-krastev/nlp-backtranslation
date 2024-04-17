@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # NOTE: Required variables to be set:
-# $l1 - source language
-# $l2 - target language
+# $SRC - source language
+# $TGT - target language
 # $spm - path to sentencepiece model
 # $src_train - path to source training data
 # $tgt_train - path to target training data
@@ -10,12 +10,12 @@
 # $dev_file - path to target development data
 # $test_file - path to target test data
 
-if [ -z "$l1" ]; then
+if [ -z "$SRC" ]; then
     echo "l1 is not set"
     exit 1
 fi
 
-if [ -z "$l2" ]; then
+if [ -z "$TGT" ]; then
     echo "l2 is not set"
     exit 1
 fi
@@ -50,7 +50,7 @@ if [ -z "$test_file" ]; then
     exit 1
 fi
 
-echo "Preprocessing data for $l1-$l2"
+echo "Preprocessing data for $SRC-$TGT"
 echo "Sentencepiece model: $spm"
 echo "Source training data: $src_train"
 echo "Target training data: $tgt_train"
@@ -61,28 +61,28 @@ echo "Test file: $test_file"
 # preprocessing
 
 # tokenize train-mono, dev, test
-cat $src_train | sacremoses -l $l1 -j 4 normalize -c tokenize -a > $train_file.tok.$l1
-cat $tgt_train | sacremoses -l $l2 -j 4 normalize -c tokenize -a > $train_file.tok.$l2
+cat $src_train | sacremoses -l $SRC -j 4 normalize -c tokenize -a > $train_file.tok.$SRC
+cat $tgt_train | sacremoses -l $TGT -j 4 normalize -c tokenize -a > $train_file.tok.$TGT
 
-cat $dev_file.$l1 | sacremoses -l $l1 -j 4 normalize -c tokenize -a > $dev_file.tok.$l1
-cat $dev_file.$l2 | sacremoses -l $l2 -j 4 normalize -c tokenize -a > $dev_file.tok.$l2
+cat $dev_file.$SRC | sacremoses -l $SRC -j 4 normalize -c tokenize -a > $dev_file.tok.$SRC
+cat $dev_file.$TGT | sacremoses -l $TGT -j 4 normalize -c tokenize -a > $dev_file.tok.$TGT
 
-cat $test_file.$l1 | sacremoses -l $l1 -j 4 normalize -c tokenize -a > $test_file.tok.$l1
-cat $test_file.$l2 | sacremoses -l $l2 -j 4 normalize -c tokenize -a > $test_file.tok.$l2
+cat $test_file.$SRC | sacremoses -l $SRC -j 4 normalize -c tokenize -a > $test_file.tok.$SRC
+cat $test_file.$TGT | sacremoses -l $TGT -j 4 normalize -c tokenize -a > $test_file.tok.$TGT
 
 
 # separated for clarity
 python ./spm_encode.py --model="$spm" \
     --output_format=piece \
-    --inputs $train_file.tok.$l1 $train_file.tok.$l2  \
-    --outputs  $train_file.tok.spm.$l1 $train_file.tok.spm.$l2
+    --inputs $train_file.tok.$SRC $train_file.tok.$TGT  \
+    --outputs  $train_file.tok.spm.$SRC $train_file.tok.spm.$TGT
 
 python ./spm_encode.py --model="$spm" \
     --output_format=piece \
-    --inputs $dev_file.tok.$l1 $dev_file.tok.$l2  \
-    --outputs  $dev_file.tok.spm.$l1 $dev_file.tok.spm.$l2
+    --inputs $dev_file.tok.$SRC $dev_file.tok.$TGT  \
+    --outputs  $dev_file.tok.spm.$SRC $dev_file.tok.spm.$TGT
 
 python ./spm_encode.py --model="$spm" \
     --output_format=piece \
-    --inputs $test_file.tok.$l1 $test_file.tok.$l2  \
-    --outputs  $test_file.tok.spm.$l1 $test_file.tok.spm.$l2
+    --inputs $test_file.tok.$SRC $test_file.tok.$TGT  \
+    --outputs  $test_file.tok.spm.$SRC $test_file.tok.spm.$TGT
