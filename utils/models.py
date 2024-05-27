@@ -17,7 +17,7 @@ class TranslationLightning(LightningModule):
         test_folder="test",
     ):
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=["model", "tokenizer", "test_folder"])
         self.model = model
         self.tokenizer = tokenizer
 
@@ -29,16 +29,14 @@ class TranslationLightning(LightningModule):
         labels = batch.labels.squeeze(1)
 
         outputs = self.model.generate(input_ids)
-        hyps = self.tokenizer.decode(outputs, skip_special_tokens=True)
-        refs = self.tokenizer.decode(labels, skip_special_tokens=True)
-
+        hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        refs = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
+        srcs = self.tokenizer.batch_decode(input_ids, skip_special_tokens=True)
         bleu = self.sacrebleu.compute(predictions=hyps, references=refs)
 
-        self.hyp_handle.write(hyps + "\n")
-        self.ref_handle.write(refs + "\n")
-        self.src_handle.write(
-            self.tokenizer.decode(input_ids, skip_special_tokens=True) + "\n"
-        )
+        self.hyp_handle.write("\n".join(hyps) + "\n")
+        self.ref_handle.write("\n".join(refs) + "\n")
+        self.src_handle.write("\n".join(srcs) + "\n")
 
         return hyps, refs, bleu
 
@@ -75,13 +73,12 @@ class TranslationLightning(LightningModule):
         labels = batch.labels.squeeze(1)
 
         outputs = self.model.generate(input_ids)
-        hyps = self.tokenizer.decode(outputs, skip_special_tokens=True)
-        refs = self.tokenizer.decode(labels, skip_special_tokens=True)
+        hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        refs = self.tokenizer.batch_decode(labels, skip_special_tokens=True)
 
         bleu = self.sacrebleu.compute(predictions=hyps, references=refs)
 
         self.log("val_bleu", bleu, prog_bar=True)
-        self.write
         return bleu
 
     def configure_optimizers(self):
