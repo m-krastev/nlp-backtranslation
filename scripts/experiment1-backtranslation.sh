@@ -21,8 +21,13 @@ MODEL=big-$TGT-$SRC
 
 
 # Copy the dev and test (binary) files
-cp Data/$data/bin-$TGT-$SRC/valid* $OUTPUT_DIR/
-cp Data/$data/bin-$TGT-$SRC/test* $OUTPUT_DIR/
+
+mkdir -p $OUTPUT_DIR/bin-$TGT-$SRC/
+cp Data/$data/bin-$TGT-$SRC/valid* $OUTPUT_DIR/bin-$TGT-$SRC/
+cp Data/$data/bin-$TGT-$SRC/test* $OUTPUT_DIR/bin-$TGT-$SRC/
+
+# $dev_file=$OUTPUT_DIR/valid.$SRC
+# $test_file=$OUTPUT_DIR/test.$SRC
 
 # GENERATE BACKTRANSLATIONS
 fairseq-generate Data/$data/bin-$TGT-$SRC \
@@ -41,7 +46,7 @@ train_file=$OUTPUT_DIR/$MODEL.train
 
 # Tokenize and binarize the backtranslated data
 cat $OUTPUT_DIR/$MODEL.train.$SRC | sacremoses -l $SRC -j 4 normalize -c tokenize -a > $train_file.tok.$SRC
-cat $tgt_train | sacremoses -l $TGT -j 4 normalize -c tokenize -a > $train_file.tok.$TGT
+cat $OUTPUT_DIR/$MODEL.train.$TGT | sacremoses -l $TGT -j 4 normalize -c tokenize -a > $train_file.tok.$TGT
 
 
 python ./spm_encode.py --model="$spm" \
@@ -54,8 +59,8 @@ fairseq-preprocess \
     --srcdict ./Data/it-mono/dict.$SRC.txt \
     --tgtdict ./Data/it-mono/dict.$TGT.txt \
     --trainpref $train_file.tok.spm \
-        --validpref $dev_file.tok.spm \
-        --testpref $test_file.tok.spm \
+        # --validpref $dev_file.tok.spm \
+        # --testpref $test_file.tok.spm \
     --destdir "$(dirname $train_file)/bin" \
         --thresholdtgt 0 --thresholdsrc 0 --workers 20 --only-source
 
