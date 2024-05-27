@@ -78,7 +78,7 @@ class TranslationLightning(LightningModule):
 
         bleu = self.sacrebleu.compute(predictions=hyps, references=refs)
 
-        self.log("val_bleu", bleu, prog_bar=True)
+        self.log("val_bleu", bleu["score"], prog_bar=True)
         return bleu
 
     def configure_optimizers(self):
