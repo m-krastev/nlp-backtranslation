@@ -161,3 +161,4 @@ cython_debug/
 # Data/
 Models/
 .DS_Store
+lightning_logs/
