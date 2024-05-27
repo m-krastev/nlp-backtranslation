@@ -4,7 +4,7 @@ import evaluate
 import torch
 from pytorch_lightning import LightningModule
 from transformers import FSMTForConditionalGeneration
-
+import bitsanybytes
 
 class TranslationLightning(LightningModule):
     def __init__(
@@ -87,7 +87,7 @@ class TranslationLightning(LightningModule):
             self.hparams.adam_beta,
             self.hparams.weight_decay,
         )
-        return torch.optim.AdamW(
+        return bitsanybytes.optim.Adam8bit(
             self.model.parameters(), lr=lr, betas=adam_beta, weight_decay=weight_decay
         )
 
