@@ -87,8 +87,8 @@ class TranslationLightning(LightningModule):
             self.hparams.adam_beta,
             self.hparams.weight_decay,
         )
-        return bitsanybytes.optim.Adam8bit(
-            self.model.parameters(), lr=lr, betas=adam_beta, weight_decay=weight_decay
+        return bitsandbytes.optim.Adam8bit(
+            self.model.parameters(), lr=lr, betas=adam_beta
         )
 
     def test_step(self, batch, batch_idx):
