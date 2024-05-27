@@ -4,7 +4,7 @@ import evaluate
 import torch
 from pytorch_lightning import LightningModule
 from transformers import FSMTForConditionalGeneration
-import bitsanybytes
+import bitsandbytes
 
 class TranslationLightning(LightningModule):
     def __init__(
