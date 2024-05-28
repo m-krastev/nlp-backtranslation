@@ -162,3 +162,5 @@ cython_debug/
 Models/
 .DS_Store
 lightning_logs/
+*.out
+logs/

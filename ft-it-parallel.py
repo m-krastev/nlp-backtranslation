@@ -23,7 +23,7 @@ from pytorch_lightning import Trainer
 
 SRC = "de"
 TGT = "en"
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 MAX_LENGTH = 512
 
 cwd = Path.cwd()
@@ -45,8 +45,8 @@ model = FSMTForConditionalGeneration.from_pretrained(mname)
 # print(decoded)  # Machine Learning is great, isn't it?
 
 # Copying settings from the original file though probably unneeded..
-model.generation_config.length_penalty = 1.2
-model.generation_config.num_beams = 5
+# model.generation_config.length_penalty = 1.2
+# model.generation_config.num_beams = 5
 
 model_pl = TranslationLightning(
     model,
@@ -56,7 +56,7 @@ model_pl = TranslationLightning(
     weight_decay=1e-4,
     test_folder=test_folder,
 )
-trainer = Trainer(max_epochs=20, gradient_clip_val=0.1)
+trainer = Trainer(max_epochs=20, gradient_clip_val=0.1, precision="bf16")
 
 # %% [markdown]
 # ## Simple Generation
@@ -84,4 +84,6 @@ data = TranslationDataModule(
 # %%
 # Now we can train the model
 trainer.fit(model_pl, datamodule=data)
-trainer.predict(model_pl, datamodule=data)
+results = trainer.predict(model_pl, datamodule=data)
+average_bleu = sum([r[2] for r in results]) / len(results)
+print(f"Average BLEU: {average_bleu}")
