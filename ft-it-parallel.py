@@ -18,8 +18,10 @@ from transformers import FSMTForConditionalGeneration, FSMTTokenizer
 from utils.data import TranslationDataModule
 from utils.models import TranslationLightning
 from pytorch_lightning import Trainer
-
+from peft import get_peft_model, LoraConfig
 # Isn't it so nice and clean now? I went through FOUR different ways of doing this before I thought of this one. WDWFDGFEQWDQWFGA
+import torch
+torch.set_float32_matmul_precision('medium')
 
 SRC = "de"
 TGT = "en"
@@ -39,6 +41,17 @@ mname = f"facebook/wmt19-{SRC}-{TGT}"
 tokenizer = FSMTTokenizer.from_pretrained(mname)
 model = FSMTForConditionalGeneration.from_pretrained(mname)
 
+config = LoraConfig(
+    r = 16,
+    lora_alpha = 16,
+    lora_dropout = 0.2,
+    target_modules = ["v_proj", "q_proj"]
+)
+
+model = get_peft_model(model, config)
+model.print_trainable_parameters()
+
+
 # input_ids = tokenizer.encode( "Maschinelles Lernen ist großartig, oder?", return_tensors="pt")
 # outputs = model.generate(input_ids)
 # decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -56,7 +69,8 @@ model_pl = TranslationLightning(
     weight_decay=1e-4,
     test_folder=test_folder,
 )
-trainer = Trainer(max_epochs=20, gradient_clip_val=0.1, precision="bf16")
+trainer = Trainer(max_epochs=5, gradient_clip_val=0.1, precision="bf16-mixed")
+
 
 # %% [markdown]
 # ## Simple Generation
@@ -79,11 +93,16 @@ data = TranslationDataModule(
     max_length=MAX_LENGTH,
 )
 
-# results = trainer.predict(model_pl, datamodule=data)
+results = trainer.predict(model_pl, datamodule=data)
+average_bleu = sum([r[2]["score"] for r in results]) / len(results)
+print(f"Average BLEU: {average_bleu}")
 
+exit
 # %%
 # Now we can train the model
+model_pl.test_folder = model_pl.test_folder / ("ft-"+it_parallel)
 trainer.fit(model_pl, datamodule=data)
+# model_pl = TranslationLightning.load_from_checkpoint("/home/mkrastev/nlp2/lightning_logs/version_6413306/checkpoints/epoch=0-step=2500.ckpt", model=model, tokenizer=tokenizer)
 results = trainer.predict(model_pl, datamodule=data)
-average_bleu = sum([r[2] for r in results]) / len(results)
+average_bleu = sum([r[2]["score"] for r in results]) / len(results)
 print(f"Average BLEU: {average_bleu}")
