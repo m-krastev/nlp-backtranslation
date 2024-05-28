@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+
+#SBATCH --job-name=NLP2-FT-PARA
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:59:00
+#SBATCH --mem=60000M
+#SBATCH --output=/home/mkrastev/nlp2/%A.out
+
+date
+
+export HF_DATASETS_CACHE=/scratch-local/mkrastev/hf_cache_dir
+
+WORK_DIR=$HOME/nlp2
+cd $WORK_DIR
+
+module load 2023
+module load PyTorch/2.1.2-foss-2023a-CUDA-12.1.1
+source $HOME/FoMo-LoRA/.venv/bin/activate
+
+TOKENIZERS_PARALLELISM=false
+
+srun python ft-it-parallel.py
