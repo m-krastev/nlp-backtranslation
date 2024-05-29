@@ -3,8 +3,7 @@ from typing import Any, List, Tuple
 
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
-from transformers import FSMTTokenizer
-
+from transformers import FSMTTokenizer, DataCollatorForSeq2Seq
 
 class TranslationDataset(Dataset):
     def __init__(self, src_texts, tgt_texts, tokenizer, max_length=1024):
@@ -23,7 +22,6 @@ class TranslationDataset(Dataset):
         return self.tokenizer(
             src_text,
             text_target=tgt_text,
-            padding="max_length",
             truncation=True,
             max_length=self.max_length,
             return_tensors="pt",
@@ -37,6 +35,7 @@ class TranslationDataModule(LightningDataModule):
         src: str,
         tgt: str,
         tokenizer: FSMTTokenizer,
+        model: Any = None,
         batch_size: int = 32,
         max_length: int = 1024,
     ):
@@ -47,6 +46,14 @@ class TranslationDataModule(LightningDataModule):
         self.tokenizer = tokenizer
         self.batch_size = batch_size
         self.max_length = max_length
+        self.model = model
+        self.collator = DataCollatorForSeq2Seq(self.tokenizer, model=self.model)
+
+    def collate_fn(self, batch):
+        for sample in batch:
+            for key in sample:
+                sample[key] = sample[key].squeeze()
+        return self.collator(batch)    
 
     def setup(self, stage: str) -> None:
         self.train = load_dataset(
@@ -60,13 +67,13 @@ class TranslationDataModule(LightningDataModule):
         )
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.train, batch_size=self.batch_size, shuffle=True, collate_fn=self.collate_fn)
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=self.batch_size, shuffle=False)
+        return DataLoader(self.val, batch_size=self.batch_size, shuffle=False, collate_fn=self.collate_fn)
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=self.batch_size, shuffle=False)
+        return DataLoader(self.test, batch_size=self.batch_size, shuffle=False, collate_fn=self.collate_fn)
 
     def predict_dataloader(self):
         return self.test_dataloader()

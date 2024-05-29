@@ -41,7 +41,7 @@ class TranslationLightning(LightningModule):
         self.ref_handle.flush(        )
         self.src_handle.flush(        )
 
-        return hyps, refs, bleu
+        return bleu["score"]
 
     def on_predict_start(self) -> None:
         super().on_predict_start()
@@ -84,7 +84,7 @@ class TranslationLightning(LightningModule):
         bleu = self.sacrebleu.compute(predictions=hyps, references=refs)
 
         self.log("val_bleu", bleu["score"], prog_bar=True)
-        return bleu
+        return bleu["score"]
 
     def configure_optimizers(self):
         lr, adam_beta, weight_decay = (
