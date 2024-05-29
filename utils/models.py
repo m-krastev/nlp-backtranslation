@@ -37,6 +37,9 @@ class TranslationLightning(LightningModule):
         self.hyp_handle.write("\n".join(hyps) + "\n")
         self.ref_handle.write("\n".join(refs) + "\n")
         self.src_handle.write("\n".join(srcs) + "\n")
+        self.hyp_handle.flush(        )
+        self.ref_handle.flush(        )
+        self.src_handle.flush(        )
 
         return hyps, refs, bleu
 
