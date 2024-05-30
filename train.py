@@ -132,7 +132,7 @@ def main():
         gradient_clip_val=0.1,
         check_val_every_n_epoch=args.check_val_every_n_epoch,
         limit_val_batches=0.25,
-        loggers=wandb_logger,
+        logger=wandb_logger,
         precision="16-mixed",
     )
 
