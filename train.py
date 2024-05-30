@@ -72,7 +72,7 @@ def main():
         default="outputs",
         help="The directory to store model generation outputs in.",
     )
-    parser.add_argument("--val_check_interval", type=float, default = 0)
+    parser.add_argument("--check_val_every_n_epoch", type=int, default = 0)
     parser.add_argument(
         "--lr", type=float, default=3e-4, help="The learning rate to use."
     )
@@ -124,7 +124,7 @@ def main():
     trainer = Trainer(
         max_epochs=args.epochs,
         gradient_clip_val=0.1,
-        val_check_interval=args.val_check_interval,
+        check_val_every_n_epoch=args.check_val_every_n_epoch,
         limit_val_batches=0.25,
         precision="16-mixed",
     )
