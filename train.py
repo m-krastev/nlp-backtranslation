@@ -72,7 +72,7 @@ def main():
         default="outputs",
         help="The directory to store model generation outputs in.",
     )
-    parser.add_argument("--val_check_interval", type=int|float, default = 0)
+    parser.add_argument("--val_check_interval", type=float, default = 0)
     parser.add_argument(
         "--lr", type=float, default=3e-4, help="The learning rate to use."
     )
