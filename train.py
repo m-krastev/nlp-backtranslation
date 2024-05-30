@@ -120,12 +120,19 @@ def main():
     if args.load_from_checkpoint:
         model_pl = model_pl.load_from_checkpoint(args.load_from_checkpoint)
 
+
+
+    from lightning.pytorch.loggers import WandbLogger
+
+    wandb_logger = WandbLogger(project="huggingface")
+
     # Create the trainer
     trainer = Trainer(
         max_epochs=args.epochs,
         gradient_clip_val=0.1,
         check_val_every_n_epoch=args.check_val_every_n_epoch,
         limit_val_batches=0.25,
+        loggers=wandb_logger,
         precision="16-mixed",
     )
 
