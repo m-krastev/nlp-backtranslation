@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import tensorboard
 import torch
 from peft import LoraConfig, get_peft_model
 from pytorch_lightning import Trainer, seed_everything
@@ -122,9 +123,10 @@ def main():
 
 
 
-    from lightning.pytorch.loggers import WandbLogger
+    from lightning.pytorch.loggers import WandbLogger, TensorBoardLogger
 
     wandb_logger = WandbLogger(project="huggingface")
+    tensorboard_logger = TensorBoardLogger("lightning_logs")
 
     # Create the trainer
     trainer = Trainer(
@@ -132,7 +134,7 @@ def main():
         gradient_clip_val=0.1,
         check_val_every_n_epoch=args.check_val_every_n_epoch,
         limit_val_batches=0.25,
-        logger=wandb_logger,
+        logger=[wandb_logger, tensorboard_logger],
         precision="16-mixed",
     )
 

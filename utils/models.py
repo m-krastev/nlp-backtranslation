@@ -6,6 +6,7 @@ from pytorch_lightning import LightningModule
 from transformers import FSMTForConditionalGeneration
 import bitsandbytes
 
+
 class TranslationLightning(LightningModule):
     def __init__(
         self,
@@ -27,6 +28,7 @@ class TranslationLightning(LightningModule):
     def forward(self, batch):
         input_ids = batch.input_ids
         labels = batch.labels
+        labels[labels == -100] = self.tokenizer.pad_token_id
 
         outputs = self.model.generate(input_ids)
         hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
@@ -37,9 +39,9 @@ class TranslationLightning(LightningModule):
         self.hyp_handle.write("\n".join(hyps) + "\n")
         self.ref_handle.write("\n".join(refs) + "\n")
         self.src_handle.write("\n".join(srcs) + "\n")
-        self.hyp_handle.flush(        )
-        self.ref_handle.flush(        )
-        self.src_handle.flush(        )
+        self.hyp_handle.flush()
+        self.ref_handle.flush()
+        self.src_handle.flush()
 
         return bleu["score"]
 
@@ -72,6 +74,7 @@ class TranslationLightning(LightningModule):
     def validation_step(self, batch, batch_idx):
         input_ids = batch.input_ids
         labels = batch.labels
+        labels[labels == -100] = self.tokenizer.pad_token_id
 
         outputs = self.model.generate(input_ids)
         hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
@@ -89,7 +92,9 @@ class TranslationLightning(LightningModule):
             self.hparams.weight_decay,
         )
         return bitsandbytes.optim.Adam8bit(
-            filter(lambda param: param.requires_grad, self.model.parameters()), lr=lr, betas=adam_beta
+            filter(lambda param: param.requires_grad, self.model.parameters()),
+            lr=lr,
+            betas=adam_beta,
         )
 
     def test_step(self, batch, batch_idx):
