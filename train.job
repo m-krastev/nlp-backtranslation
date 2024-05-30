@@ -29,4 +29,10 @@ wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
 
 TOKENIZERS_PARALLELISM=false
 
-srun python generate_bt.py
+
+srun python train.py \
+    --output_dir tests/bt-generation-en-de \
+    --batch_size 16 \
+    --max_length 128 \
+    --epochs 10 \
+    --train_dir generation-en-de

@@ -46,7 +46,7 @@ class TranslationLightning(LightningModule):
     def on_predict_start(self) -> None:
         super().on_predict_start()
         if not self.test_folder.exists():
-            self.test_folder.mkdir()
+            self.test_folder.mkdir(exist_ok=True, parents=True)
         self.hypothesis_file = self.test_folder / "hypothesis.hyp"
         self.reference_file = self.test_folder / "reference.ref"
         self.source_file = self.test_folder / "source.src"

@@ -72,13 +72,14 @@ def main():
         default="outputs",
         help="The directory to store model generation outputs in.",
     )
+    parser.add_argument("--val_check_interval", type=int|float, default = 0)
     parser.add_argument(
         "--lr", type=float, default=3e-4, help="The learning rate to use."
     )
     parser.add_argument("--seed", type=int, default=42, help="The random seed to use.")
 
     args = parser.parse_args()
-
+    print(args)
     seed_everything(args.seed)
 
     SRC = args.srclang
@@ -123,7 +124,7 @@ def main():
     trainer = Trainer(
         max_epochs=args.epochs,
         gradient_clip_val=0.1,
-        val_check_interval=0.25,
+        val_check_interval=args.val_check_interval,
         limit_val_batches=0.25,
         precision="16-mixed",
     )
@@ -156,8 +157,6 @@ def main():
     )
 
     trainer.fit(model_pl, datamodule=train_data)
-    
-    model_pl.test_folder = test_folder / args.output_dir
     results = trainer.predict(model_pl, datamodule=train_data)
     average_bleu = sum([result for result in results]) / len(results)
     print(f"Average BLEU score: {average_bleu}")
