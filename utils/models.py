@@ -25,8 +25,8 @@ class TranslationLightning(LightningModule):
         self.test_folder = Path(test_folder)
 
     def forward(self, batch):
-        input_ids = batch.input_ids.squeeze(1)
-        labels = batch.labels.squeeze(1)
+        input_ids = batch.input_ids
+        labels = batch.labels
 
         outputs = self.model.generate(input_ids)
         hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
@@ -63,19 +63,15 @@ class TranslationLightning(LightningModule):
 
     def training_step(self, batch, batch_idx):
         # There are some shenanigans with the batch, so we need to extract the input_ids, attention_mask, and labels
-        input_ids = batch.input_ids.squeeze(1)
-        attention_mask = batch.attention_mask.squeeze(1)
-        labels = batch.labels.squeeze(1)
-
-        outputs = self.model(input_ids, attention_mask=attention_mask, labels=labels)
+        outputs = self.model(**batch)
         loss = outputs.loss
 
         self.log("train_loss", loss, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        input_ids = batch.input_ids.squeeze(1)
-        labels = batch.labels.squeeze(1)
+        input_ids = batch.input_ids
+        labels = batch.labels
 
         outputs = self.model.generate(input_ids)
         hyps = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
