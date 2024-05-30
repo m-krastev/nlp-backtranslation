@@ -21,6 +21,12 @@ module load 2023
 module load PyTorch/2.1.2-foss-2023a-CUDA-12.1.1
 source $HOME/FoMo-LoRA/.venv/bin/activate
 
+
+export WANDB_API_KEY=6f8979c59a86a5404f5ebdc6637e8f1087e36fef
+pip install -q wandb
+wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
+
+
 TOKENIZERS_PARALLELISM=false
 
-srun python ft-it-parallel.py
+srun python generate_bt.py
