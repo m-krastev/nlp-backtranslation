@@ -15,15 +15,15 @@ class TranslationLightning(LightningModule):
         lr=1e-4,
         adam_beta=(0.9, 0.98),
         weight_decay=1e-4,
-        test_folder="test",
+        output_dir="test",
     ):
         super().__init__()
-        self.save_hyperparameters(ignore=["model", "tokenizer", "test_folder"])
+        self.save_hyperparameters(ignore=["model", "tokenizer", "output_dir"])
         self.model = model
         self.tokenizer = tokenizer
 
         self.sacrebleu = evaluate.load("sacrebleu")
-        self.test_folder = Path(test_folder)
+        self.output_dir = Path(output_dir)
 
     def forward(self, batch):
         input_ids = batch.input_ids
@@ -47,11 +47,12 @@ class TranslationLightning(LightningModule):
 
     def on_predict_start(self) -> None:
         super().on_predict_start()
-        if not self.test_folder.exists():
-            self.test_folder.mkdir(exist_ok=True, parents=True)
-        self.hypothesis_file = self.test_folder / "hypothesis.hyp"
-        self.reference_file = self.test_folder / "reference.ref"
-        self.source_file = self.test_folder / "source.src"
+        if not self.output_dir.exists():
+            self.output_dir.mkdir(exist_ok=True, parents=True)
+        print(f"Saving outputs to {self.output_dir}")
+        self.hypothesis_file = self.output_dir / "hypothesis.hyp"
+        self.reference_file = self.output_dir / "reference.ref"
+        self.source_file = self.output_dir / "source.src"
 
         self.hyp_handle = open(self.hypothesis_file, "w")
         self.ref_handle = open(self.reference_file, "w")

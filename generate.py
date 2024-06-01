@@ -76,7 +76,7 @@ def main():
     MAX_LENGTH = args.max_length
 
     data_dir = Path(args.data_dir)
-    test_folder = Path(args.output_dir)
+    output_dir = Path(args.output_dir)
 
     # Load the model and tokenizer
     mname = f"facebook/wmt19-{SRC}-{TGT}"
@@ -104,10 +104,9 @@ def main():
         model_pl = TranslationLightning(
             model,
             tokenizer,
-            lr=args.lr,
             adam_beta=(0.9, 0.98),
             weight_decay=1e-4,
-            test_folder=test_folder,
+            output_dir=output_dir,
         )
 
 
@@ -126,7 +125,7 @@ def main():
         batch_size=BATCH_SIZE,
         max_length=MAX_LENGTH,
     )
-    model_pl.test_dir = Path(args.output_dir)
+    model_pl.output_dir = Path(args.output_dir)
     
     match args.split:
         case "test":
