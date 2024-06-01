@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --time=00:59:00
-#SBATCH --mem=60000M
+#SBATCH --mem=32G
 #SBATCH --output=/home/mkrastev/nlp2/%A.out
 
 date
@@ -23,16 +23,21 @@ source $HOME/FoMo-LoRA/.venv/bin/activate
 
 
 export WANDB_API_KEY=6f8979c59a86a5404f5ebdc6637e8f1087e36fef
-pip install -q wandb
 wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
 
 
 TOKENIZERS_PARALLELISM=false
 
-
 srun python train.py \
-    --output_dir tests/bt-generation-en-de \
-    --batch_size 16 \
-    --max_length 128 \
-    --epochs 10 \
-    --train_dir generation-en-de
+    --output_dir tests/it-parallel \
+    
+
+# # Reverse mode fine-tuning
+# srun python train.py \
+#     --output_dir tests/it-parallel-de-en \
+#     --src de --tgt en \
+#     --batch_size 32 \
+#     --max_length 128 \
+#     --epochs 15 \
+#     --train_dir it-parallel --seed 42 \
+#     --check_val_every_n_epoch 5
