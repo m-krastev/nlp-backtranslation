@@ -21,6 +21,10 @@ def main():
         default="data/it-parallel",
         help="The directory containing the data for generation.",
     )
+    
+    parser.add_argument(
+        "--split",  type=str, default="test", help="The split to use for generation.", choices=["test", "val", "train"]
+    )
 
     parser.add_argument(
         "--batch_size", type=int, default=8, help="The batch size to use."
@@ -123,7 +127,23 @@ def main():
         max_length=MAX_LENGTH,
     )
     model_pl.test_dir = Path(args.output_dir)
-    results = trainer.predict(model_pl, test_data)
+    
+    match args.split:
+        case "test":
+            test_data.setup("predict")
+            data = test_data.predict_dataloader()
+        case "val":
+            test_data.setup("val")
+            data = test_data.val_dataloader()
+        case "train":
+            test_data.setup("train")
+            data = test_data.train_dataloader()
+        case _:
+            print("Invalid split. Using test split. ")
+            test_data.setup("predict")
+            data = test_data.predict_dataloader()
+    
+    results = trainer.predict(model_pl, data)
     print(f"BLEU score: {mean(results):.3f}±{stdev(results):.3f}")
     exit(0)
 
