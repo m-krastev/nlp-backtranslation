@@ -98,4 +98,4 @@ class TranslationLightning(LightningModule):
         )
 
     def test_step(self, batch, batch_idx):
-        return self.validation_step(batch, batch_idx)
+        return self.predict_step(batch, batch_idx)

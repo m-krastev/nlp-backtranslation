@@ -46,6 +46,7 @@ def main():
         default=None,
         help="The checkpoint to load from.",
     )
+    parser.add_argument("--resume_from_checkpoint", type=str, default=None, help = "Resume training from a given checkpoint.")
     parser.add_argument(
         "--only_predict", action="store_true", help="Only run predictions."
     )
@@ -73,7 +74,7 @@ def main():
         default="outputs",
         help="The directory to store model generation outputs in.",
     )
-    parser.add_argument("--check_val_every_n_epoch", type=int, default = 0)
+    parser.add_argument("--check_val_every_n_epoch", type=int, default=0)
     parser.add_argument(
         "--lr", type=float, default=3e-4, help="The learning rate to use."
     )
@@ -108,30 +109,30 @@ def main():
     model = get_peft_model(model, config)
     model.print_trainable_parameters()
 
-    model_pl = TranslationLightning(
-        model,
-        tokenizer,
-        lr=args.lr,
-        adam_beta=(0.9, 0.98),
-        weight_decay=1e-4,
-        test_folder=test_folder,
-    )
-
     # Load from checkpoint if specified
     if args.load_from_checkpoint:
-        model_pl = model_pl.load_from_checkpoint(args.load_from_checkpoint)
-
-
+        model_pl = TranslationLightning.load_from_checkpoint(
+            args.load_from_checkpoint, model=model, tokenizer=tokenizer
+        )
+    else:
+        model_pl = TranslationLightning(
+            model,
+            tokenizer,
+            lr=args.lr,
+            adam_beta=(0.9, 0.98),
+            weight_decay=1e-4,
+            test_folder=test_folder,
+        )
 
     from lightning.pytorch.loggers import WandbLogger, TensorBoardLogger
 
     wandb_logger = WandbLogger(project="huggingface")
-    tensorboard_logger = TensorBoardLogger("lightning_logs")
+    tensorboard_logger = TensorBoardLogger(".")
 
     # Create the trainer
     trainer = Trainer(
         max_epochs=args.epochs,
-        gradient_clip_val=0.1,
+        gradient_clip_val=0.3,
         check_val_every_n_epoch=args.check_val_every_n_epoch,
         limit_val_batches=0.25,
         logger=[wandb_logger, tensorboard_logger],
@@ -149,7 +150,8 @@ def main():
             batch_size=BATCH_SIZE,
             max_length=MAX_LENGTH,
         )
-        results = trainer.predict(model_pl, test_data.test_dataloader())
+        model_pl.test_dir = Path(args.output_dir)
+        results = trainer.predict(model_pl, test_data)
         average_bleu = sum([result for result in results]) / len(results)
         print(f"Average BLEU score: {average_bleu}")
         exit(0)
@@ -165,7 +167,7 @@ def main():
         max_length=MAX_LENGTH,
     )
 
-    trainer.fit(model_pl, datamodule=train_data)
+    trainer.fit(model_pl, datamodule=train_data, ckpt_path=args.resume_from_checkpoint)
     results = trainer.predict(model_pl, datamodule=train_data)
     average_bleu = sum([result for result in results]) / len(results)
     print(f"Average BLEU score: {average_bleu}")
