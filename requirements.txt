@@ -8,3 +8,5 @@ sentencepiece==0.1.96
 evaluate
 tensorboard
 wandb
+sacrebleu
+unbabel-comet
