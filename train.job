@@ -36,22 +36,18 @@ out_dir=tests/deepl-de-en-it-parallel
 #     --max_length 128 \
 #     --load_from_checkpoint /home/mkrastev/nlp2/Models/iterated-it-mono/checkpoints/epoch=14-step=46875.ckpt \
 #     --data_dir $data_dir --split test
-python calculate_bleu.py $out_dir/hypothesis.hyp $out_dir/reference.ref --src $out_dir/source.src --comet
+# python calculate_bleu.py $out_dir/hypothesis.hyp $out_dir/reference.ref --src $out_dir/source.src --comet
 
-# srun python generate.py \
-#     --output_dir tests/deepl-de-en-euro-news \
-#     --srclang de --tgtlang en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --load_from_checkpoint /home/mkrastev/nlp2/Models/deepl/checkpoints/epoch=14-step=18765.ckpt \
-#     --data_dir Data/raw-euro-news --split test
-# srun python calculate_bleu.py tests/deepl-de-en-it-parallel/hypothesis.hyp tests/deepl-de-en-it-parallel/reference.ref --src tests/deepl-de-en-it-parallel/source.src --comet
+srun python train.py \
+    --data_dir Data/generation+it-parallel-en-de \
+    --output_dir tests/generation-de-en-0.7 \
+    --srclang de --tgtlang en \
+    --batch_size 32 \
+    --max_length 128 \
+    --check_val_every_n_epoch 5 \
+    --use_diversity_metric --top_percentage 0.7 \
+    --only_predict \
+    --load_from_checkpoint /home/mkrastev/nlp2/huggingface/9e864n2x/checkpoints/epoch=4-step=10940.ckpt \
+    --epochs 10
 
-# srun python train.py \
-#     --data_dir Data/deepl-it-mono-de-en \
-#     --output_dir tests/deepl-de-en-it-parallel \
-#     --srclang de --tgtlang en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --check_val_every_n_epoch 5 \
-#     --epochs 15
+python calculate_bleu.py tests/generation-de-en-0.7/hypothesis.hyp tests/generation-de-en-0.7/reference.ref --src tests/generation-de-en-0.7/source.src --comet

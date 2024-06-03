@@ -64,7 +64,7 @@ class TranslationDataModule(LightningDataModule):
 
     def setup(self, stage: str) -> None:
         if self.use_combined_data and self.generation_folder is not None:
-            src_tgt_pairs = list(zip(load_dataset(self.data_dir / "train", self.src, self.tgt)))
+            src_tgt_pairs = list(zip(*load_dataset(self.data_dir / "train", self.src, self.tgt)))
             selected_pairs = apply_diversity_metric(src_tgt_pairs, top_percentage=self.top_percentage)
             src, tgt = zip(*selected_pairs)
             self.train = TranslationDataset(src, tgt, self.tokenizer, self.max_length)
