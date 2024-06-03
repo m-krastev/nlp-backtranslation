@@ -64,24 +64,20 @@ class TranslationDataModule(LightningDataModule):
 
     def setup(self, stage: str) -> None:
         if self.use_combined_data and self.generation_folder is not None:
-            src_tgt_pairs = load_combined_dataset(self.data_dir, self.generation_folder, self.src, self.tgt)
+            src_tgt_pairs = list(zip(load_dataset(self.data_dir / "train", self.src, self.tgt)))
             selected_pairs = apply_diversity_metric(src_tgt_pairs, top_percentage=self.top_percentage)
             src, tgt = zip(*selected_pairs)
             self.train = TranslationDataset(src, tgt, self.tokenizer, self.max_length)
-            dev_dir = self.data_dir / self.generation_folder / "dev"
-            test_dir = self.data_dir / self.generation_folder / "test"
 
         else: 
             train_dir = self.data_dir / "train"
-            dev_dir = self.data_dir / "dev"
-            test_dir = self.data_dir / "test"
             src, tgt = load_dataset(train_dir, self.src, self.tgt)
             self.train = TranslationDataset(src, tgt, self.tokenizer, self.max_length)
 
-        src, tgt = load_dataset(dev_dir, self.src, self.tgt)
+        src, tgt = load_dataset(self.data_dir / "dev", self.src, self.tgt)
         self.val = TranslationDataset(src, tgt, self.tokenizer, self.max_length)
 
-        src, tgt = load_dataset(test_dir, self.src, self.tgt)
+        src, tgt = load_dataset(self.data_dir / "test", self.src, self.tgt)
         self.test = TranslationDataset(src, tgt, self.tokenizer, self.max_length)
 
     def train_dataloader(self):
@@ -122,15 +118,3 @@ def load_dataset(path: Path, src: str, tgt: str) -> Tuple[List[str], List[str]]:
         tgt_texts = f.read().splitlines()
 
     return src_texts, tgt_texts
-
-def load_combined_dataset(data_dir: Path, generation_folder: str, src: str, tgt: str) -> Tuple[List[str], List[str]]:
-    combined_data_dir = data_dir / generation_folder
-
-    src_texts, tgt_texts = [], []
-    
-    for split in ['train', 'dev', 'test']:
-        src_split, tgt_split = load_dataset(combined_data_dir / split, src, tgt)
-        src_texts.extend(src_split)
-        tgt_texts.extend(tgt_split)
-    
-    return list(zip(src_texts, tgt_texts))

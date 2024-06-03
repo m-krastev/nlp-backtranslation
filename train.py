@@ -6,9 +6,8 @@ from peft import LoraConfig, get_peft_model
 from pytorch_lightning import Trainer, seed_everything
 from transformers import FSMTForConditionalGeneration, FSMTTokenizer
 
-from utils.data import TranslationDataModule, load_combined_dataset
+from utils.data import TranslationDataModule
 from utils.models import TranslationLightning
-from utils.metric import apply_diversity_metric
 import argparse
 
 torch.set_float32_matmul_precision("medium")
