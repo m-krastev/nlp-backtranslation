@@ -250,7 +250,7 @@ overviews; printing multi-page views
 / text / swriter / guide / text _ nav _ keyb.xhp
 Local Class
 Tools Find Double Images
-% 1, because the search function of the GSM modem is not active
+% 1, because the GSM modem search function is not active
 def onAccChanged (self, acc): has _ click = 'click' in self.accSupportedActions () self.click _ button.set _ sensitive (has _ click)
 Mailbox type: local
 Permian.
@@ -548,7 +548,7 @@ Success Message
 Here you can manage the access control lists (acl; s) of & imap; directories.
 Use suggestion from translation database
 Exif / IPTC / XMP
-Number of categories to be displayed at one time:
+Number of categories to be displayed at once:
 Sort Items
 Insert '% 1' dictionary words into database. Please wait.
 Fuzzy Mask
@@ -651,7 +651,7 @@ Change the time period for deferring the alarm, or cancel.
 Luk De Ketelaere
 (Select
 Once a week
-Issuing this command should help you find the cause of the problem and find a solution. For GStreamer, you may need to specify another sink (e. g. osssink).
+Outputting this command should help you to find the cause of the problem and find a solution. For GStreamer you may need to specify another sink (e. g. osssink).
 Delete Sketch
 Bay Bulls
 shadows; headers / footers
@@ -966,7 +966,7 @@ Investment Handling
 size / n
 No last used source with address "% s" could be found
 New name for "% 1"
-If no size is specified, the natural size of the element is used, this is also called the size hint. Note that not all items have a meaningful size hint.
+If no size is specified, the natural size of the element is used, this is called the size hint. Note that not all items have a meaningful size hint.
 With this command another directory will be used to create the kdeedu module:
 Dirk Eschler, webmaster and i18n coordinator deschler * users. sourceforge. net
 Monitored / Ignored Icon
@@ -1003,7 +1003,7 @@ abc Music Notation File
 Update, deleted
 --delete
 dialogue box in the page context menu.
-Finish Round
+Finish the round
 Specifies the distance between columns, in percent.
 Is the time display anchored at a corner of the window? 0 = unanchored; 1 = anchored at right corner; 2 = anchored at bottom right corner; 3 = anchored at bottom right corner.
 Returns FALSE on error, TRUE on error.
@@ -1134,7 +1134,7 @@ OCRAD OCR
 Timeline Settings
 This event occurs when the mouse pointer is moved to the control.
 Orta
-The Planetary Coordinates module calculates the position for each major celestial body in the Solar System, for any date, and for any location on Earth. Simply select the celestial body in the Solar System in the drop down box, and enter the desired date and time and the geographic coordinates of your location (this value is taken as the default from the & kstars; settings). Press Calculate, and the equatorial, horizontal, and ecliptic coordinates of the celestial body are displayed.
+The Planetary Coordinates module calculates the position for each major celestial body in the Solar System, for any date, and for any location on Earth. Just select the celestial body in the Solar System box and enter the desired date and time and the geographical coordinates of your location (this value is taken by default from the & kstars; settings). Press Calculate and the equatorial, horizontal, and ecliptic coordinates of the celestial body will be displayed.
 Invalid POP3 STAT response.
 The selected text will not be rotated.
 Dibra
@@ -1173,7 +1173,7 @@ updating; fields and charts, automatically (Writer)
 Move Element Down
 TeX Documentation
 databases; defaults to filters
-Usually you get new certificates by checking signatures in email messages, because the certificates are usually embedded in the signatures that were done with them. However, if you want to send someone a message with which you have not had any contact before, you need to fetch the certificate from an LDAP folder (gpgsm; can do this automatically for you) or from a file. Also, you need to import your own certificate after getting the response from & ca; to your certification request.
+Usually you get new certificates by checking signatures in email messages, because the certificates are usually embedded in the signatures that were made with them. However, if you want to send someone a message with which you have not had any contact before, you need to fetch the certificate from an LDAP folder (gpgsm; can do this automatically for you) or from a file. Also, you need to import your own certificate after getting the response from & ca; to your certification request.
 From Six
 In order to use this function, Ispell data must first be loaded using udm _ load _ ispell _ data ().
 / text / swriter / guide / subscript.xhp
@@ -1219,7 +1219,7 @@ Anne-Marie Mahfouf annma @ kde. org
 CSV files; importing and exporting
 Opens the standard & kde; dialog to configure the & konquest; toolbars.
 / text / scalc / guide / fraction _ enter.xhp
-Records Row-by-Line
+Records row by row
 What is so special about & konsole;?
 Universal karaoke and movie player
 X-axes; positioning
@@ -1652,7 +1652,7 @@ Player Control (Human / PC)
 Tape is being re-indexed
 Helio Chissini de Castro
 A verb with orthographic irregularity. When a z comes before an e, the z becomes c. Examples: cazar, alzar
-& Separate all blocks by empty lines
+& Separate all blocks by blank lines
 (Global)
 Clear the light table on closing
 keycap
@@ -1720,7 +1720,7 @@ The result of the query is displayed in the top window.
 % H: R _ FRV _ TLSOFF _ RELAX not applied to ld statement
 md5
 Save bibliographic information
-Takes the file's handle and shortens the file' s length to's size.
+Takes the file's handle and reduces the file' s length to size.
 The public keys for the user credentials% 1 are not certified with a trusted signature. These recipients cannot read the message.
 *. Desktop
 Enter the IP address and the port of the server:
@@ -1854,7 +1854,7 @@ Victoria de Las Tunas
 XMMS2 tray
 Rotate and stack the falling blocks so that the rows are continuously filled and the board becomes empty.
 All (% 1)
-Unless you have saved the photo, you can restore the original image by selecting File Restore from the File menu or using the The Image Editing Button on the toolbar. You will lose any modifications you have made to the photo since you last saved it.
+Unless you have saved the photo, you can restore the original image by selecting File Recover from the File menu or using the The Image Editing Button in the Toolbar. You will lose any modifications you have made to the photo since you last saved it.
 Searches for the next occurrence of a text in the presentation.
 Insert Item After
 Next Slide
@@ -1900,7 +1900,7 @@ You get the error There is no element present to handle the stream's mimetype au
 This value affects how this album is sorted. If you select "Different artists" then the album will be saved together with other albums starting with "V."
 Toolbars Load Toolbars
 (Since & kde; 3.2) Specifies additional folders in a ranking where configuration files are searched in addition to $XDG _ CONFIG _ HOME. Default is / etc / xdg. & kde; adds additional locations from $KDEDIRS and profiles. Used by. menu descriptions under $XDG _ CONFIG _ DIRS / menus.
-The playlist contains all the tracks you have attached for playback. You can change the order by dragging and dropping the records with the mouse. Above the playlist is a text box into which you can enter a filter. As soon as you enter letters, only the tracks containing the letters are displayed. To reset the filter, press the space key until the text box is empty.
+The playlist contains all the tracks you have attached for playback. You can change the order by dragging and dropping the records with the mouse. Above the playlist is a text box into which you can enter a filter. As soon as you enter letters, only the tracks containing the letters are displayed. To reset the filter, press the space bar until the text box is empty.
 Nouakchott
 Guadeloupe
 Returns a string in which the sections starting with a percent sign (%) (followed by a 2-digit hexadecimal value) are replaced by letters.
@@ -1910,7 +1910,7 @@ Enter the name of the new collection:
 Thistlecolor
 Details - Online Databases
 Program copyright & copy; 1997 Mathias Mueller in5y158 @ public. uni-hamburg. de
-Segments to Changes Curves
+Segments of curves
 Use replacement tables instead of suggestion mode
 First, use the following import lines:
 Move window to the current desktop

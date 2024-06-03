@@ -24,23 +24,34 @@ source $HOME/FoMo-LoRA/.venv/bin/activate
 
 export WANDB_API_KEY=6f8979c59a86a5404f5ebdc6637e8f1087e36fef
 wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
-
-
 TOKENIZERS_PARALLELISM=false
 
+data_dir=Data/iterated-generation-de-en
+out_dir=tests/deepl-de-en-it-parallel
 
 # srun python generate.py \
-#     --output_dir tests/iterated-generation-de-en \
+#     --output_dir $out_dir \
 #     --srclang de --tgtlang en \
 #     --batch_size 32 \
 #     --max_length 128 \
-#     --data_dir Data/it-mono --split train
+#     --load_from_checkpoint /home/mkrastev/nlp2/Models/iterated-it-mono/checkpoints/epoch=14-step=46875.ckpt \
+#     --data_dir $data_dir --split test
+python calculate_bleu.py $out_dir/hypothesis.hyp $out_dir/reference.ref --src $out_dir/source.src --comet
 
-srun python train.py \
-    --data_dir Data/deepl-it-mono-de-en \
-    --output_dir tests/deepl-de-en-it-parallel \
-    --srclang de --tgtlang en \
-    --batch_size 32 \
-    --max_length 128 \
-    --check_val_every_n_epoch 5 \
-    --epochs 15
+# srun python generate.py \
+#     --output_dir tests/deepl-de-en-euro-news \
+#     --srclang de --tgtlang en \
+#     --batch_size 32 \
+#     --max_length 128 \
+#     --load_from_checkpoint /home/mkrastev/nlp2/Models/deepl/checkpoints/epoch=14-step=18765.ckpt \
+#     --data_dir Data/raw-euro-news --split test
+# srun python calculate_bleu.py tests/deepl-de-en-it-parallel/hypothesis.hyp tests/deepl-de-en-it-parallel/reference.ref --src tests/deepl-de-en-it-parallel/source.src --comet
+
+# srun python train.py \
+#     --data_dir Data/deepl-it-mono-de-en \
+#     --output_dir tests/deepl-de-en-it-parallel \
+#     --srclang de --tgtlang en \
+#     --batch_size 32 \
+#     --max_length 128 \
+#     --check_val_every_n_epoch 5 \
+#     --epochs 15

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import tensorboard
+from statistics import mean, stdev
 import torch
 from peft import LoraConfig, get_peft_model
 from pytorch_lightning import Trainer, seed_everything
@@ -42,7 +42,7 @@ def main():
     )
     parser.add_argument("--resume_from_checkpoint", type=str, default=None, help = "Resume training from a given checkpoint.")
     parser.add_argument(
-        "--only_predict", action="store_true", help="Only run predictions."
+        "--only_predict", action="store_true", help="Only run predictions. Note: only test resource will be used."
     )
     parser.add_argument(
         "--srclang", "--src", type=str, default="de", help="The source language."
@@ -141,8 +141,7 @@ def main():
         )
         model_pl.output_dir = Path(args.output_dir)
         results = trainer.predict(model_pl, test_data)
-        average_bleu = sum([result for result in results]) / len(results)
-        print(f"Average BLEU score: {average_bleu}")
+        print(f"BLEU score: {mean(results):.2f}±{stdev(results):.1f}")
         exit(0)
 
     # Train the model
@@ -158,8 +157,7 @@ def main():
 
     trainer.fit(model_pl, datamodule=train_data, ckpt_path=args.resume_from_checkpoint)
     results = trainer.predict(model_pl, datamodule=train_data)
-    average_bleu = sum([result for result in results]) / len(results)
-    print(f"Average BLEU score: {average_bleu}")
+    print(f"BLEU score: {mean(results):.2f}±{stdev(results):.1f}")
 
 
 if __name__ == "__main__":

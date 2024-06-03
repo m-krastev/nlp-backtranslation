@@ -143,7 +143,7 @@ def main():
             data = test_data.predict_dataloader()
     
     results = trainer.predict(model_pl, data)
-    print(f"BLEU score: {mean(results):.3f}±{stdev(results):.3f}")
+    print(f"BLEU score: {mean(results):.2f}±{stdev(results):.1f}")
     exit(0)
 
 if __name__ == "__main__":
