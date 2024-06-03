@@ -72,6 +72,7 @@ def main():
     parser.add_argument("--use_diversity_metric", action="store_true", help="Use the diversity metric for data selection.")
 
     parser.add_argument("--top_percentage", type=float, default=0.5, help="The top percentage of data to use based on the diversity metric.")
+    parser.add_argument("--generation_dir", type=str, default=None, help="The directory containing the BT generated data")
 
     args = parser.parse_args()
     print(args)
@@ -131,20 +132,6 @@ def main():
         logger=[wandb_logger, tensorboard_logger],
         precision="16-mixed",
     )
-    train_data = TranslationDataModule(
-        data_dir,
-        SRC,
-        TGT,
-        tokenizer,
-        model,
-        batch_size=BATCH_SIZE,
-        max_length=MAX_LENGTH,
-        use_combined_data=args.use_diversity_metric,
-        generation_folder="generation+it-parallel-en-de",
-        top_percentage=args.top_percentage
-    )
-    train_data.setup('fit')
-    trainer.fit(model_pl, train_data)
 
     # Only predict if specified
     if args.only_predict:
@@ -170,6 +157,9 @@ def main():
         model,
         batch_size=BATCH_SIZE,
         max_length=MAX_LENGTH,
+        use_combined_data=args.use_diversity_metric,
+        generation_folder=args.generation_dir,
+        top_percentage=args.top_percentage
     )
     trainer.fit(model_pl, datamodule=train_data, ckpt_path=args.resume_from_checkpoint)
     results = trainer.predict(model_pl, datamodule=train_data)
