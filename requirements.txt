@@ -1,2 +1,10 @@
 sacremoses
 subword_nmt
+transformers==4.12.5
+pytorch-lightning==1.5.8
+peft
+torch==1.13.0
+sentencepiece==0.1.96
+evaluate
+tensorboard
+wandb

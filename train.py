@@ -6,8 +6,9 @@ from peft import LoraConfig, get_peft_model
 from pytorch_lightning import Trainer, seed_everything
 from transformers import FSMTForConditionalGeneration, FSMTTokenizer
 
-from utils.data import TranslationDataModule
+from utils.data import TranslationDataModule, load_combined_dataset
 from utils.models import TranslationLightning
+from utils.metric import apply_diversity_metric
 import argparse
 
 torch.set_float32_matmul_precision("medium")
@@ -69,6 +70,10 @@ def main():
     )
     parser.add_argument("--seed", type=int, default=42, help="The random seed to use.")
 
+    parser.add_argument("--use_diversity_metric", action="store_true", help="Use the diversity metric for data selection.")
+
+    parser.add_argument("--top_percentage", type=float, default=0.5, help="The top percentage of data to use based on the diversity metric.")
+
     args = parser.parse_args()
     print(args)
     seed_everything(args.seed)
@@ -127,6 +132,20 @@ def main():
         logger=[wandb_logger, tensorboard_logger],
         precision="16-mixed",
     )
+    train_data = TranslationDataModule(
+        data_dir,
+        SRC,
+        TGT,
+        tokenizer,
+        model,
+        batch_size=BATCH_SIZE,
+        max_length=MAX_LENGTH,
+        use_combined_data=args.use_diversity_metric,
+        generation_folder="generation+it-parallel-en-de",
+        top_percentage=args.top_percentage
+    )
+    train_data.setup('fit')
+    trainer.fit(model_pl, train_data)
 
     # Only predict if specified
     if args.only_predict:
@@ -144,7 +163,6 @@ def main():
         average_bleu = sum([result for result in results]) / len(results)
         print(f"Average BLEU score: {average_bleu}")
         exit(0)
-
     # Train the model
     train_data = TranslationDataModule(
         data_dir,
@@ -155,12 +173,9 @@ def main():
         batch_size=BATCH_SIZE,
         max_length=MAX_LENGTH,
     )
-
     trainer.fit(model_pl, datamodule=train_data, ckpt_path=args.resume_from_checkpoint)
     results = trainer.predict(model_pl, datamodule=train_data)
     average_bleu = sum([result for result in results]) / len(results)
     print(f"Average BLEU score: {average_bleu}")
-
-
 if __name__ == "__main__":
     main()

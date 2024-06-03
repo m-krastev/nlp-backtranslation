@@ -4,6 +4,7 @@ import evaluate
 import torch
 from pytorch_lightning import LightningModule
 from transformers import FSMTForConditionalGeneration
+from torch.optim import Adam
 import bitsandbytes
 
 
@@ -100,3 +101,5 @@ class TranslationLightning(LightningModule):
 
     def test_step(self, batch, batch_idx):
         return self.predict_step(batch, batch_idx)
+
+
