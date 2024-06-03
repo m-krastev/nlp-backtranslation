@@ -6,7 +6,7 @@
 #SBATCH --job-name=NLP2-FT-PARA
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --time=00:59:00
+#SBATCH --time=02:59:00
 #SBATCH --mem=32G
 #SBATCH --output=/home/mkrastev/nlp2/%A.out
 
@@ -28,49 +28,10 @@ wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
 
 TOKENIZERS_PARALLELISM=false
 
-# srun python train.py \
-#     --output_dir tests/it-parallel \
-    
-
-# # Reverse mode fine-tuning
-# srun python train.py \
-#     --output_dir tests/it-parallel-de-en \
-#     --src de --tgt en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --epochs 15 \
-#     --train_dir it-parallel --seed 42 \
-#     --check_val_every_n_epoch 5
-# echo "Generating with Base model..."
-# python generate.py \
-#     --output_dir tests/euro-news-de-en \
-#     --srclang de --tgtlang en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --data_dir Data/raw-euro-news --split test
-
-# python calculate_bleu.py tests/euro-news-de-en/hypothesis.hyp tests/euro-news-de-en/reference.ref --src tests/euro-news-de-en/source.src --comet
-
-# echo "Generating with it-mono finetuned model."
-# python generate.py \
-#     --output_dir tests/bt-it-mono-euro-news-de-en \
-#     --srclang de --tgtlang en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --load_from_checkpoint /home/mkrastev/nlp2/Models/it-mono/checkpoints/epoch=9-step=31250.ckpt \
-#     --data_dir Data/raw-euro-news --split test
-# python calculate_bleu.py tests/bt-it-mono-euro-news-de-en/hypothesis.hyp tests/euro-news-de-en/reference.ref --src tests/euro-news-de-en/source.src --comet
-
-
-# echo "Generating with it-mono + it-parallel finetuned model."
-# python generate.py \
-#     --output_dir tests/bt-it-mono+it-parallel-euro-news-de-en \
-#     --srclang de --tgtlang en \
-#     --batch_size 32 \
-#     --max_length 128 \
-#     --load_from_checkpoint /home/mkrastev/nlp2/Models/it-mono+parallel/checkpoints/epoch=14-step=56250.ckpt \
-#     --data_dir Data/raw-euro-news --split test
-# python calculate_bleu.py tests/bt-it-mono+it-parallel-euro-news-de-en/hypothesis.hyp tests/euro-news-de-en/reference.ref --src tests/euro-news-de-en/source.src --comet
-
-python calculate_bleu.py tests/it-parallel/hypothesis.hyp tests/it-parallel/reference.ref --src tests/it-parallel/source.src --comet
-
+srun python generate.py \
+    --output_dir tests/iterated-generation-de-en \
+    --srclang de --tgtlang en \
+    --load_from_checkpoint /home/mkrastev/nlp2/Models/reverse-it-parallel/checkpoints/epoch=14-step=9375.ckpt \
+    --batch_size 32 \
+    --max_length 128 \
+    --data_dir Data/it-mono --split train
