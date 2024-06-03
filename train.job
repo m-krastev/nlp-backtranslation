@@ -28,10 +28,19 @@ wandb login 6f8979c59a86a5404f5ebdc6637e8f1087e36fef
 
 TOKENIZERS_PARALLELISM=false
 
-srun python generate.py \
-    --output_dir tests/iterated-generation-de-en \
+
+# srun python generate.py \
+#     --output_dir tests/iterated-generation-de-en \
+#     --srclang de --tgtlang en \
+#     --batch_size 32 \
+#     --max_length 128 \
+#     --data_dir Data/it-mono --split train
+
+srun python train.py \
+    --data_dir Data/-generation-de-en \
+    --output_dir tests/bt-iterated-de-en-it-parallel \
     --srclang de --tgtlang en \
-    --load_from_checkpoint /home/mkrastev/nlp2/Models/reverse-it-parallel/checkpoints/epoch=14-step=9375.ckpt \
     --batch_size 32 \
     --max_length 128 \
-    --data_dir Data/it-mono --split train
+    --check_val_every_n_epoch 5 \
+    --epochs 15

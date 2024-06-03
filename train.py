@@ -63,7 +63,7 @@ def main():
         default="outputs",
         help="The directory to store model generation outputs in.",
     )
-    parser.add_argument("--check_val_every_n_epoch", type=int, default=0)
+    parser.add_argument("--check_val_every_n_epoch", type=int, default=1)
     parser.add_argument(
         "--lr", type=float, default=3e-4, help="The learning rate to use."
     )
